@@ -13,6 +13,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -56,6 +60,7 @@ public class Main {
 	public static void verificarEstructuraCarpetas() {
 		System.out.println("Verificando estructura de directorios y archivos...");
 		boolean todoOk = true;
+		boolean estructuraCreada = false;
 
 		String[] directorios = {
 			"PLANTAS",
@@ -65,38 +70,156 @@ public class Main {
 			"DEVOLUCIONES"
 		};
 
-		// Solo verificar directorios, no crearlos
+		// Verificar si falta la estructura
+		boolean estructuraFalta = false;
 		for (String dir : directorios) {
-			File carpeta = new File(dir);
-			if (!carpeta.exists()) {
-				System.err.println(" ALERTA: Directorio '" + dir + "' no existe. Por favor créalo.");
+			if (!new File(dir).exists()) {
+				estructuraFalta = true;
+			}
+		}
+
+		// Buscar archivos iniciales en la raíz
+		File plantasXMLRaiz = new File("plantas.xml");
+		File plantasDatRaiz = new File("plantas.dat");
+		File empleadosDatRaiz = new File("empleados.dat");
+		boolean archivosEnRaiz = plantasXMLRaiz.exists() || plantasDatRaiz.exists() || empleadosDatRaiz.exists();
+		
+		// Debug: mostrar qué archivos se encontraron
+		if (archivosEnRaiz) {
+			System.out.println("Archivos encontrados en la raíz:");
+			if (plantasXMLRaiz.exists()) System.out.println("  - plantas.xml");
+			if (plantasDatRaiz.exists()) System.out.println("  - plantas.dat");
+			if (empleadosDatRaiz.exists()) System.out.println("  - empleados.dat");
+		}
+
+		// Crear estructura si falta
+		if (estructuraFalta) {
+			System.out.println("Creando estructura de directorios...");
+			for (String dir : directorios) {
+				File carpeta = new File(dir);
+				if (!carpeta.exists()) {
+					if (carpeta.mkdirs()) {
+						System.out.println("Directorio creado: " + dir);
+					} else {
+						System.err.println("Error al crear directorio: " + dir);
+						todoOk = false;
+					}
+				}
+			}
+			estructuraCreada = true;
+		}
+
+		// Mover archivos desde la raíz si existen
+		if (archivosEnRaiz) {
+			try {
+				// Mover plantas.xml
+				if (plantasXMLRaiz.exists()) {
+					Path origenXML = Paths.get("plantas.xml");
+					Path destinoXML = Paths.get("PLANTAS/plantas.xml");
+					if (!Files.exists(destinoXML)) {
+						Files.move(origenXML, destinoXML, StandardCopyOption.REPLACE_EXISTING);
+						System.out.println("Archivo movido: plantas.xml -> PLANTAS/plantas.xml");
+					} else {
+						System.out.println("Archivo PLANTAS/plantas.xml ya existe, no se mueve desde raíz");
+					}
+				}
+				
+				// Mover plantas.dat
+				if (plantasDatRaiz.exists()) {
+					Path origenDat = Paths.get("plantas.dat");
+					Path destinoDat = Paths.get("PLANTAS/plantas.dat");
+					if (!Files.exists(destinoDat)) {
+						Files.move(origenDat, destinoDat, StandardCopyOption.REPLACE_EXISTING);
+						System.out.println("Archivo movido: plantas.dat -> PLANTAS/plantas.dat");
+					} else {
+						System.out.println("Archivo PLANTAS/plantas.dat ya existe, no se mueve desde raíz");
+					}
+				}
+				
+				// Mover empleados.dat
+				if (empleadosDatRaiz.exists()) {
+					Path origenEmp = Paths.get("empleados.dat");
+					Path destinoEmp = Paths.get("EMPLEADOS/empleados.dat");
+					if (!Files.exists(destinoEmp)) {
+						Files.move(origenEmp, destinoEmp, StandardCopyOption.REPLACE_EXISTING);
+						System.out.println("Archivo movido: empleados.dat -> EMPLEADOS/empleados.dat");
+					} else {
+						System.out.println("Archivo EMPLEADOS/empleados.dat ya existe, no se mueve desde raíz");
+					}
+				}
+			} catch (IOException e) {
+				System.err.println("Error al mover archivos: " + e.getMessage());
+				e.printStackTrace();
 				todoOk = false;
+			}
+		} else {
+			// Mensaje informativo si no hay archivos en la raíz
+			System.out.println("No se encontraron archivos en la raíz para mover");
+		}
+
+		// Crear archivos de baja si no existen
+		if (new File("PLANTAS").exists()) {
+			try {
+				File plantasBajaDat = new File("PLANTAS/plantasbaja.dat");
+				if (!plantasBajaDat.exists()) {
+					plantasBajaDat.createNewFile();
+					System.out.println("Archivo creado: PLANTAS/plantasbaja.dat");
+				}
+			} catch (IOException e) {
+				System.err.println("Error al crear plantasbaja.dat: " + e.getMessage());
+			}
+
+			try {
+				File plantasBajaXML = new File("PLANTAS/plantasbaja.xml");
+				if (!plantasBajaXML.exists()) {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(plantasBajaXML));
+					bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+					bw.newLine();
+					bw.write("<plantasBaja>");
+					bw.newLine();
+					bw.write("</plantasBaja>");
+					bw.close();
+					System.out.println("Archivo creado: PLANTAS/plantasbaja.xml");
+				}
+			} catch (IOException e) {
+				System.err.println("Error al crear plantasbaja.xml: " + e.getMessage());
+			}
+		}
+
+		if (new File("EMPLEADOS/BAJA").exists()) {
+			try {
+				File empleadosBajaDat = new File("EMPLEADOS/BAJA/empleadosBaja.dat");
+				if (!empleadosBajaDat.exists()) {
+					empleadosBajaDat.createNewFile();
+					System.out.println("Archivo creado: EMPLEADOS/BAJA/empleadosBaja.dat");
+				}
+			} catch (IOException e) {
+				System.err.println("Error al crear empleadosBaja.dat: " + e.getMessage());
 			}
 		}
 
 		// Verificar archivos críticos
-		File plantasXML = new File("PLANTAS/plantas.xml");
-		if (!plantasXML.exists()) {
-			System.err.println(" ALERTA: 'PLANTAS/plantas.xml' no existe. Por favor añade datos.");
-			todoOk = false;
+		String[] archivosCriticos = {
+			"PLANTAS/plantas.xml",
+			"PLANTAS/plantas.dat",
+			"EMPLEADOS/empleados.dat"
+		};
+		for (String archivo : archivosCriticos) {
+			if (!new File(archivo).exists()) {
+				System.err.println("ALERTA: '" + archivo + "' no existe. Por favor añade datos.");
+				todoOk = false;
+			}
 		}
 
-		File plantasDat = new File("PLANTAS/plantas.dat");
-		if (!plantasDat.exists()) {
-			System.err.println(" ALERTA: 'PLANTAS/plantas.dat' no existe. Por favor añade datos.");
-			todoOk = false;
-		}
-
-		File empleadosDat = new File("EMPLEADOS/empleados.dat");
-		if (!empleadosDat.exists()) {
-			System.err.println(" ALERTA: 'EMPLEADOS/empleados.dat' no existe. Por favor añade datos.");
-			todoOk = false;
-		}
-
+		// Mensaje final
 		if (todoOk) {
-			System.out.println(" Verificación completada. Todos los archivos y directorios están presentes.\n");
+			if (estructuraCreada) {
+				System.out.println("\nVerificación completada. Estructura creada y archivos organizados.\n");
+			} else {
+				System.out.println("Verificación completada. Todos los archivos y directorios están presentes.\n");
+			}
 		} else {
-			System.err.println("\n  Faltan archivos o directorios críticos. El programa puede fallar.\n");
+			System.err.println("\nFaltan archivos o directorios críticos. El programa puede fallar.\n");
 		}
 	}
 
