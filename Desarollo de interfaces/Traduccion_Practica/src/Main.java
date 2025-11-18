@@ -1,3 +1,4 @@
+import java.awt.EventQueue;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,19 +10,38 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class Main {
+	
+	public static void main(String[] args) {
+		
+		EventQueue.invokeLater(new Runnable(){
+			public void run() {
+				try {
+					
+					VentanaTraductor ventana = new VentanaTraductor();
+					ventana.setSize(600,400);
+					ventana.setVisible(true);
+					
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	/*
 
 	public static void main(String[] args) throws IOException {
 
 		URL direc = new URL("https://www.spanishdict.com/translate/alfombra");
 		
-		/*
-		String palabraTraducida;
-		String html = obtenerHTML(direc);
 		
-		palabraTraducida = cortarHTML(html);
+		//String palabraTraducida;
+		//String html = obtenerHTML(direc);
 		
-		System.out.println(palabraTraducida);
-		*/
+		//palabraTraducida = cortarHTML(html);
+		
+		//System.out.println(palabraTraducida);
+		
 		
 		String web = "https://www.spanishdict.com/translate/gato";
 		
@@ -71,4 +91,5 @@ public class Main {
 		return codigo;
 	}
 
+	*/
 }

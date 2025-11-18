@@ -18,8 +18,7 @@ import java.awt.event.ActionEvent;
 
 public class Traduccion_Practica_Ventanas {
 	
-	static String REGEX_TRADUCIR = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ.,\\s]+$";
-
+	static String REGEX_TRADUCIR = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$";
 
 	private JFrame frame;
 	private JTextField textField;
@@ -73,7 +72,7 @@ public class Traduccion_Practica_Ventanas {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				String palabraTraducir = textField.getText();
+				String palabraTraducir = textField.getText().trim();
 				
 				if(palabraTraducir.matches(REGEX_TRADUCIR)) {
 					String web = "https://www.spanishdict.com/translate/" + palabraTraducir;
