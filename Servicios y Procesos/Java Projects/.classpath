@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="PSP_Hilos_FR3_WaitYNotify/src"/>
+	<classpathentry kind="src" path="PSP_Hilos1/src"/>
+	<classpathentry kind="src" path="PSP_Hilos2/src"/>
+	<classpathentry kind="src" path="PSP_Hilos3/src"/>
+	<classpathentry kind="src" path="PSP_Hilos4/src"/>
+	<classpathentry kind="src" path="PSP1/src"/>
+	<classpathentry kind="src" path="PSP2/src"/>
+	<classpathentry kind="src" path="PSP3/src"/>
+	<classpathentry kind="src" path="PSP4/src"/>
+	<classpathentry kind="src" path="PSP5/src"/>
+	<classpathentry kind="src" path="PSP6/src"/>
+	<classpathentry kind="src" path="PSP7/src"/>
+	<classpathentry kind="src" path="PSP8/src"/>
+	<classpathentry kind="src" path="PSP9/src"/>
+	<classpathentry kind="output" path="PSP1/bin"/>
+</classpath>
